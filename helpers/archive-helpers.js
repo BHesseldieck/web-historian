@@ -59,9 +59,10 @@ exports.isUrlArchived = function(URL, cb) {
 };
 
 exports.downloadUrls = function(arr) {
+  arr = arr.filter(url => url !== '');
   arr.forEach((URL) => {
     exports.isUrlArchived(URL, (bool) => {
-      // call Download to download the resurce if not exisiting
+      // call Download to download the resource if not exisiting
       if (!bool) {
         htmlfetch.download(URL);
       }

@@ -56,7 +56,6 @@ exports.handleRequest = function (req, res) {
               archive.downloadUrls(arr);
             });
             fs.readFile(archive.paths.siteAssets + '/loading.html', (err, data) => {
-              console.log('reading file successful');
               res.writeHead(302, {'Content-Type': 'text/html', 'Content-Length': data.length});
               res.write(data);
               res.end();
