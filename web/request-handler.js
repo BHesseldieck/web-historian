@@ -25,8 +25,10 @@ exports.handleRequest = function (req, res) {
         res.write(data);
         res.end();
       });
-    } else if (pathURL.slice(-1) === path.join(__dirname, '../archives/sites')) {
+    } else if (pathURL.slice(0, -1) === path.join(__dirname, '../archives/sites')) {
       
+      // archive.isUrlArchived(pathURL[pathURL.length-1],) // to be continued
+
       // var pathArr = pathURL.split('/');
       // fs.readFile(archive.paths.archivedSites + '/' + pathArr[pathArr.length - 1], 'UTF-8', (err, data) => {
       //  if (err) {
