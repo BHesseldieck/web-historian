@@ -62,6 +62,19 @@ exports.handleRequest = function (req, res) {
               res.end();
             });
           });
+        } else {
+          archive.isUrlArchived(pureURL, (bool) => {
+            if (bool) {
+              fs.readFile(archive.paths.archivedSites + '/' + pureURL, (err, data) => {
+                res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': data.length});
+                res.write(data);
+                res.end();
+              });
+            } else {
+              res.writeHead(statusCode, helpers.headers);
+              res.end('404 - Site not archived, go back to Home and submit a archive-request');
+            }
+          });
         }
       });
     });
