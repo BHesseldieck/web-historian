@@ -34,7 +34,7 @@ exports.readListOfUrls = function(cb) {
 };
 
 exports.isUrlInList = function(checkURL, cb) {
-  this.readListOfUrls(function(arr) {
+  this.readListOfUrls((arr) => {
     if (arr.indexOf(checkURL) > -1) {
       cb(true);
     } else {
@@ -51,8 +51,14 @@ exports.addUrlToList = function(addURL, cb) {
   });
 };
 
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(URL, cb) {
+  fs.readdir(this.paths.archivedSites, (err, files) => {
+    files.indexOf(URL) > -1 ? cb(true) : cb(false);
+  });
 };
 
-exports.downloadUrls = function() {
+exports.downloadUrls = function(arr) {
+  arr.forEach((URL) => {
+    fs.writeFile(exports.paths.archivedSites + '/' + URL, URL, (err) => { if (err) { throw err; } });
+  });
 };

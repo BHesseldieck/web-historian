@@ -8,12 +8,12 @@ exports.handleRequest = function (req, res) {
 
   var pathURL = req.url.split('?')[0];
   var query = req.url.split('?')[1];
-  console.log(pathURL, query);
+
   var answer = '';
   var statusCode = 404;
 
   if (req.method === 'GET') {
-    if (pathURL === '/') {
+    if (pathURL === '/' || pathURL === '/favicon.ico') {
       fs.readFile(archive.paths.siteAssets + '/index.html', (err, data) => {
         res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': data.length});
         res.write(data);
@@ -25,19 +25,39 @@ exports.handleRequest = function (req, res) {
         res.write(data);
         res.end();
       });
-    } else {
-      // var pathArr = pathURL.split('/');
-      // fs.readFile(archive.paths.archivedSites + '/' + pathArr[pathArr.length - 1], 'UTF-8', (err, data) => {
-      //  if (err) {
-      //   console.log('ERROR, File does not exist');
-      //  } else {
-      //   res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': data.length});
-      //   res.write(data);
-      //   res.end();
-      //  }
-      // });'
+    } else if (pathURL.slice(-1) === path.join(__dirname, '../archives/sites')) {
+      
+      var pathArr = pathURL.split('/');
+      fs.readFile(archive.paths.archivedSites + '/' + pathArr[pathArr.length - 1], 'UTF-8', (err, data) => {
+       if (err) {
+        console.log('ERROR, File does not exist');
+       } else {
+        res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': data.length});
+        res.write(data);
+        res.end();
+       }
+      });
       res.writeHead(statusCode, helpers.headers);
-      res.end();
-    } 
+      res.end(path.join(__dirname, '../archives/sites'));
+    } else {
+      res.writeHead(statusCode, helpers.headers);
+      res.end(path.join(__dirname, '../archives/sites'));
+    }
+  } else if (req.method === 'POST') {
+    var websiteReq = '';
+    req.on('data', data => {
+      websiteReq += data;
+      websiteReq = websiteReq.slice(4) + '\n';
+    });
+    req.on('end', () => {
+      archive.addUrlToList(websiteReq, (err) => {
+        if (err) { throw err; }
+        res.writeHead(302, helpers.headers);
+        res.end();
+      });
+    });
+  } else {
+    res.writeHead(statusCode, helpers.headers);
+    res.end(path.join(__dirname, '../archives/sites'));
   }
 };
