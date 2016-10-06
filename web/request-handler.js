@@ -65,14 +65,11 @@ exports.handleRequest = function (req, res) {
         } else {
           archive.isUrlArchived(pureURL, (bool) => {
             if (bool) {
-              fs.readFile(archive.paths.archivedSites + '/' + pureURL, (err, data) => {
-                res.writeHead(200, {'Content-Type': 'text/html', 'Content-Length': data.length});
-                res.write(data);
-                res.end();
-              });
+              res.writeHead(302, {Location: 'http://localhost:8080/' + pureURL});
+              res.end();
             } else {
-              res.writeHead(statusCode, helpers.headers);
-              res.end('404 - Site not archived, go back to Home and submit a archive-request');
+              res.writeHead(500, helpers.headers);
+              res.end('500 - Internal Server Error');
             }
           });
         }
